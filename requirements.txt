@@ -1,0 +1,7 @@
+prometheus-client==0.20.0
+flask==3.0.3
+click==8.1.7
+flake8==7.0.0
+requests==2.32.3
+opentelemetry-sdk==1.25.0
+opentelemetry-exporter-otlp==1.25.0

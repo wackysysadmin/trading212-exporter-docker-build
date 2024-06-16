@@ -1,0 +1,33 @@
+logging {
+  level  = "info"
+  format = "logfmt"
+}
+
+prometheus.remote_write "docker" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+  }
+}
+
+otelcol.receiver.otlp "default" {
+  grpc { endpoint = "0.0.0.0:4317" }
+
+  output {
+    metrics = [otelcol.exporter.prometheus.default.input]
+  }
+}
+
+otelcol.exporter.prometheus "default" {
+  forward_to = [prometheus.remote_write.docker.receiver]
+}
+
+prometheus.scrape "trading212" {
+  targets = [
+    {"__address__" = "trading212-exporter:5001", "instance" = "one"},
+  ]
+
+  forward_to = [prometheus.remote_write.docker.receiver]
+
+  scrape_interval = "30s"
+  metrics_path    = "/metrics"
+}
